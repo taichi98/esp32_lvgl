@@ -1,9 +1,9 @@
 #include "style_msgbox.h"
 #include "brightness_16.h"
+#include "wifi_manager.h"
 
 extern void lv_create_main_gui(void);
 extern void lv_setting_box(void);
-extern void create_wifi_scan_screen(void);
 extern void lv_open_brightness_screen(int default_percent);
 extern int saved_brightness;
 
