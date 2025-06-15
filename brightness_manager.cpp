@@ -2,6 +2,7 @@
 #include <driver/ledc.h>
 #include <EEPROM.h>
 #include "config.h"
+#include "screen_utils.h"
 
 extern void lv_setting_box();
 extern int saved_brightness;
@@ -70,7 +71,7 @@ void brightness_slider_event_cb(lv_event_t * e) {
 void lv_open_brightness_screen(int default_percent)
 {
     lv_obj_t * scr = lv_obj_create(NULL);
-    lv_scr_load(scr);
+    lv_load_and_delete(scr);
 
     lv_obj_set_flex_flow(scr, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_flex_align(scr, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
@@ -102,7 +103,7 @@ void lv_open_brightness_screen(int default_percent)
 
     lv_obj_add_event_cb(btn_back, [](lv_event_t * e) {
         lv_obj_t *setting_screen = lv_obj_create(NULL);
-        lv_scr_load(setting_screen);
+        lv_load_and_delete(setting_screen);
         lv_setting_box(); // Mở lại màn hình Setting
     }, LV_EVENT_CLICKED, NULL);
 
