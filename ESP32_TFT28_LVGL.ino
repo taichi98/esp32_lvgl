@@ -56,15 +56,13 @@ void lv_setting_box(void) {
 
     // Mục WiFi
     create_setting_item(content, LV_SYMBOL_WIFI, "WiFi Settings", [](lv_event_t * e) {
-        create_wifi_scan_screen();
-        lv_obj_del((lv_obj_t *)lv_event_get_target(e));
+        lv_switch_screen(SCREEN_WIFI_SCAN);
     }, NULL);
 
     // Mục Brightness
     create_setting_item(content, LV_FONT_BRIGHTNESS, "Brightness", [](lv_event_t * e) {
-        lv_open_brightness_screen(saved_brightness);
-        lv_obj_del((lv_obj_t *)lv_event_get_target(e));
-    }, &lv_brightness_16);  
+        lv_switch_screen(SCREEN_BRIGHTNESS);
+    }, &lv_brightness_16);
 
     //debug ktra bộ nhớ Heap
     Serial.printf("Free heap: %u bytes\n", ESP.getFreeHeap());
@@ -76,9 +74,7 @@ static void event_handler_settingbtn(lv_event_t * e) {
   if(code == LV_EVENT_CLICKED) {
     wifi_icon = NULL;
     wifi_label = NULL;
-    lv_obj_clean(lv_scr_act());
-  
-    lv_setting_box();
+    lv_switch_screen(SCREEN_SETTING);
   }
 }
 

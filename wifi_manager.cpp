@@ -4,7 +4,6 @@
 #include "wifi_manager.h"
 #include "style_msgbox.h"
 #include "resources.h"
-#include "screen_utils.h"
 
 // Biến toàn cục
 lv_obj_t *wifi_icon = nullptr;
@@ -246,10 +245,7 @@ static void check_scan_result(lv_timer_t *timer) {
 // Quay lại màn hình cài đặt
 static void back_btn_event_handler(lv_event_t *e) {
     WiFi.scanDelete();
-    extern void lv_setting_box();
-    lv_obj_t *setting_screen = lv_obj_create(NULL);
-    lv_load_and_delete(setting_screen);
-    lv_setting_box();
+    lv_switch_screen(SCREEN_SETTING);
 }
 
 static void refresh_btn_event_handler(lv_event_t *e) {
@@ -269,8 +265,7 @@ static void refresh_btn_event_handler(lv_event_t *e) {
 
 // Tạo màn hình quét WiFi
 void create_wifi_scan_screen() {
-    lv_obj_t *screen = lv_obj_create(NULL);
-    lv_load_and_delete(screen);
+    lv_obj_t *screen = lv_screen_active();
 
     lv_obj_t *title = lv_label_create(screen);
     lv_label_set_text(title, "WiFi Networks");
