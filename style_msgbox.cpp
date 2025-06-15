@@ -135,8 +135,10 @@ static inline void lv_load_and_delete(lv_obj_t *new_screen)
     }
 }
 
-void lv_switch_screen(screen_id_t id)
+static void switch_screen_cb(void *user_data)
 {
+    screen_id_t id = static_cast<screen_id_t>((uintptr_t)user_data);
+
     lv_obj_t *scr = lv_obj_create(NULL);
     lv_load_and_delete(scr);
 
@@ -156,5 +158,10 @@ void lv_switch_screen(screen_id_t id)
         default:
             break;
     }
+}
+
+void lv_switch_screen(screen_id_t id)
+{
+    lv_async_call(switch_screen_cb, (void *)(uintptr_t)id);
 }
 
