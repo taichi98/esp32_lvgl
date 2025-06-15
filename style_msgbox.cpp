@@ -1,6 +1,12 @@
 #include "style_msgbox.h"
 #include "brightness_16.h"
 
+extern void lv_create_main_gui(void);
+extern void lv_setting_box(void);
+extern void create_wifi_scan_screen(void);
+extern void lv_open_brightness_screen(int default_percent);
+extern int saved_brightness;
+
 static lv_style_t icon_style;
 static lv_style_t style_pressed;
 
@@ -118,5 +124,37 @@ lv_obj_t * create_setting_item(lv_obj_t * parent, const char * icon_text, const 
     lv_obj_add_event_cb(cont, event_cb, LV_EVENT_CLICKED, NULL);
 
     return cont;
+}
+
+static inline void lv_load_and_delete(lv_obj_t *new_screen)
+{
+    lv_obj_t *old_screen = lv_scr_act();
+    lv_scr_load(new_screen);
+    if (old_screen && old_screen != new_screen) {
+        lv_obj_del(old_screen);
+    }
+}
+
+void lv_switch_screen(screen_id_t id)
+{
+    lv_obj_t *scr = lv_obj_create(NULL);
+    lv_load_and_delete(scr);
+
+    switch(id) {
+        case SCREEN_MAIN:
+            lv_create_main_gui();
+            break;
+        case SCREEN_SETTING:
+            lv_setting_box();
+            break;
+        case SCREEN_WIFI_SCAN:
+            create_wifi_scan_screen();
+            break;
+        case SCREEN_BRIGHTNESS:
+            lv_open_brightness_screen(saved_brightness);
+            break;
+        default:
+            break;
+    }
 }
 

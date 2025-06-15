@@ -19,7 +19,14 @@ lv_obj_t * create_icon_button(const void * img_src, const char * label_text,
 
 lv_obj_t * create_setting_item(lv_obj_t * parent, const char * icon_text, const char * label_text, lv_event_cb_t event_cb, const lv_font_t * icon_font = NULL);
 
-static void btn_effect_event_cb(lv_event_t * e);
+typedef enum {
+    SCREEN_MAIN,
+    SCREEN_SETTING,
+    SCREEN_WIFI_SCAN,
+    SCREEN_BRIGHTNESS
+} screen_id_t;
+
+void lv_switch_screen(screen_id_t id);
 
 #ifdef __cplusplus
 } /* extern "C" */
