@@ -4,10 +4,10 @@
 #include <BasicLinearAlgebra.h>
 #include <EEPROM.h>
 #include "config.h"
+#include "screen_manager.h" 
 
 extern SPIClass touchscreenSPI;
 extern XPT2046_Touchscreen touchscreen;
-extern void lv_create_main_gui();
 static lv_obj_t * back_btn;  // Khai báo toàn cục
 int x, y, z;
 
@@ -326,19 +326,23 @@ void touchscreen_read_pts(bool reset, bool *finished, int *x_avg, int *y_avg) {
 }
 
 /* Function to display a user instruction on startup */
-void lv_display_instruction(void) {
-  // Create a text label aligned center: https://docs.lvgl.io/master/widgets/label.html
-  lv_obj_t * text_label = lv_label_create(lv_screen_active());
-  lv_label_set_text(text_label, "Tap each crosshair until it disappears.");
-  lv_obj_align(text_label, LV_ALIGN_CENTER, 0, 0);
-  // Set font type and font size. More information: https://docs.lvgl.io/master/overview/font.html
-  static lv_style_t style_text_label;
-  lv_style_init(&style_text_label);
-  lv_style_set_text_font(&style_text_label, &lv_font_montserrat_14);
-  lv_obj_add_style(text_label, &style_text_label, 0);
+lv_obj_t *create_calibration_screen() {
+    // Tạo một màn hình mới
+    lv_obj_t *scr = lv_obj_create(NULL);
+    lv_obj_set_style_bg_color(scr, lv_color_white(), 0);
+    lv_obj_set_style_bg_opa(scr, LV_OPA_COVER, 0);
 
-  // Kiểm tra bộ nhớ còn lại
-  Serial.printf("Free heap: %u bytes\n", ESP.getFreeHeap());
+    // Label hướng dẫn
+    lv_obj_t *text_label = lv_label_create(scr);
+    lv_label_set_text(text_label, "Tap each crosshair until it disappears.");
+    lv_obj_align(text_label, LV_ALIGN_CENTER, 0, 0);
+
+    static lv_style_t style_text_label;
+    lv_style_init(&style_text_label);
+    lv_style_set_text_font(&style_text_label, &lv_font_montserrat_14);
+    lv_obj_add_style(text_label, &style_text_label, 0);
+
+    return scr;
 }
 
 /* function to display crosshair at given index of coordinates array */
@@ -391,6 +395,7 @@ void display_crosshairs(int x, int y) {
 
   lv_obj_set_pos(crosshair_h, x - 5, y);
   lv_obj_set_pos(crosshair_v, x, y - 5);
+
 }
 
 /* function to display 'X's at given coordinates */
@@ -467,13 +472,14 @@ void ts_calibration(
 }
 
 static void ok_btn_callback(lv_event_t * e) {
-  lv_event_code_t code = lv_event_get_code(e);
-  if(code == LV_EVENT_CLICKED) {
-    lv_obj_t * current_screen = lv_scr_act();  // Lấy màn hình hiện tại
-    lv_obj_clean(current_screen);                // Xóa màn hình hiện tại
-    lv_create_main_gui();                      // Tạo lại giao diện chính
-  }
+    if (lv_event_get_code(e) == LV_EVENT_CLICKED) {
+        lv_async_call([](void *) {
+            cleanup_screens();
+            switch_to_screen(SCREEN_MAIN);
+        }, nullptr);
+    }
 }
+
 
 void showCalibrationResultScreen() {
   // Xóa màn hình hiện tại

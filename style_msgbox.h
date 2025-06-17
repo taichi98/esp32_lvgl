@@ -13,20 +13,15 @@ void init_styles(void);
 
 void style_msgbox_customize_header(lv_obj_t * msgbox);
 
-lv_obj_t * create_icon_button(const void * img_src, const char * label_text,
+lv_obj_t * create_icon_button(lv_obj_t *parent,
+                              const void * img_src, const char * label_text,
                               lv_align_t align, lv_coord_t x_ofs, lv_coord_t y_ofs,
                               lv_event_cb_t event_cb_clicked);
 
 lv_obj_t * create_setting_item(lv_obj_t * parent, const char * icon_text, const char * label_text, lv_event_cb_t event_cb, const lv_font_t * icon_font = NULL);
 
-typedef enum {
-    SCREEN_MAIN,
-    SCREEN_SETTING,
-    SCREEN_WIFI_SCAN,
-    SCREEN_BRIGHTNESS
-} screen_id_t;
-
-void lv_switch_screen(screen_id_t id);
+static void btn_effect_event_cb(lv_event_t * e);
+void lv_debug_heap(const char *tag);
 
 #ifdef __cplusplus
 } /* extern "C" */

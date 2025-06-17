@@ -4,7 +4,7 @@
 #include <lvgl.h>
 
 extern void touchscreen_read(lv_indev_t * indev, lv_indev_data_t * data);
-extern void lv_display_instruction();
+lv_obj_t *create_calibration_screen();
 extern void gather_cal_data();
 
 extern void loadCalibrationFromEEPROM();

@@ -1,11 +1,6 @@
+#include <Arduino.h>
 #include "style_msgbox.h"
 #include "brightness_16.h"
-#include "wifi_manager.h"
-
-extern void lv_create_main_gui(void);
-extern void lv_setting_box(void);
-extern void lv_open_brightness_screen(int default_percent);
-extern int saved_brightness;
 
 static lv_style_t icon_style;
 static lv_style_t style_pressed;
@@ -69,11 +64,12 @@ static void btn_effect_event_cb(lv_event_t * e) {
     }
 }
 
-lv_obj_t * create_icon_button(const void * img_src, const char * label_text,
+lv_obj_t * create_icon_button(lv_obj_t *parent,
+                              const void * img_src, const char * label_text,
                               lv_align_t align, lv_coord_t x_ofs, lv_coord_t y_ofs,
                               lv_event_cb_t event_cb_clicked) {
     // Tạo container chứa icon và label
-    lv_obj_t * cont = lv_obj_create(lv_scr_act());
+    lv_obj_t * cont = lv_obj_create(parent);
     lv_obj_remove_style_all(cont);
     lv_obj_set_size(cont, 85, 85);
     lv_obj_align(cont, align, x_ofs, y_ofs);
@@ -98,6 +94,7 @@ lv_obj_t * create_icon_button(const void * img_src, const char * label_text,
 
     return cont;
 }
+
 
 lv_obj_t * create_setting_item(lv_obj_t * parent, const char * icon_text, const char * label_text, lv_event_cb_t event_cb, const lv_font_t * icon_font) {
     lv_obj_t * cont = lv_obj_create(parent);
@@ -125,44 +122,3 @@ lv_obj_t * create_setting_item(lv_obj_t * parent, const char * icon_text, const 
 
     return cont;
 }
-
-static inline void lv_load_and_delete(lv_obj_t *new_screen)
-{
-    lv_obj_t *old_screen = lv_scr_act();
-    lv_scr_load(new_screen);
-    if (old_screen && old_screen != new_screen) {
-        lv_async_call([](void *scr){ lv_obj_del((lv_obj_t *)scr); },
-                      old_screen);
-    }
-}
-
-static void switch_screen_cb(void *user_data)
-{
-    screen_id_t id = static_cast<screen_id_t>((uintptr_t)user_data);
-
-    lv_obj_t *scr = lv_obj_create(NULL);
-    lv_load_and_delete(scr);
-
-    switch(id) {
-        case SCREEN_MAIN:
-            lv_create_main_gui();
-            break;
-        case SCREEN_SETTING:
-            lv_setting_box();
-            break;
-        case SCREEN_WIFI_SCAN:
-            create_wifi_scan_screen();
-            break;
-        case SCREEN_BRIGHTNESS:
-            lv_open_brightness_screen(saved_brightness);
-            break;
-        default:
-            break;
-    }
-}
-
-void lv_switch_screen(screen_id_t id)
-{
-    lv_async_call(switch_screen_cb, (void *)(uintptr_t)id);
-}
-
